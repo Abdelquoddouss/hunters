@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: HunterLeague
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/master.yaml
+
+  docker:
+    compose:
+      file: src/main/docker/compose.yml
+      lifecycle-management: start_only
+
+server:
+  port: 8081
