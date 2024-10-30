@@ -28,6 +28,7 @@ public class Competition {
     @Enumerated(EnumType.STRING)
     private SpeciesType speciesType;
 
+
     private Integer minParticipants;
 
     private Integer maxParticipants;

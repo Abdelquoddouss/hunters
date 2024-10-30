@@ -16,6 +16,7 @@ public class Hunt {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+
     @ManyToOne
     private Species species;
 
