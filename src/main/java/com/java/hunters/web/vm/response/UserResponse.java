@@ -1,4 +1,4 @@
-package com.java.hunters.web.vm;
+package com.java.hunters.web.vm.response;
 
 
 import com.java.hunters.domain.enums.Role;
