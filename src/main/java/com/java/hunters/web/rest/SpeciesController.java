@@ -1,6 +1,8 @@
 package com.java.hunters.web.rest;
 
 import com.java.hunters.domain.Species;
+import com.java.hunters.domain.enums.Difficulty;
+import com.java.hunters.domain.enums.SpeciesType;
 import com.java.hunters.service.SpeciesService;
 import com.java.hunters.web.vm.SpeciesVM;
 import com.java.hunters.web.vm.mappers.SpeciesCreateVmMappers;
@@ -40,8 +42,25 @@ public class SpeciesController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateSpecies(@PathVariable UUID id, @RequestBody @Valid SpeciesVM speciesVM) {
+        Optional<Species> speciesOptional = speciesService.findById(id);
+        if (speciesOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Species not found");
+        }
+        Species species = speciesOptional.get();
+        species.setName(speciesVM.getName());
+        species.setCategory(SpeciesType.valueOf(speciesVM.getCategory()));
+        species.setMinimumWeight(speciesVM.getMinimumWeight());
+        species.setDifficulty(Difficulty.valueOf(speciesVM.getDifficulty()));
+        species.setPoints(speciesVM.getPoints());
 
-    
+        speciesService.save(species);
+        return ResponseEntity.ok("Species updated successfully");
+    }
+
+
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
