@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -23,53 +22,40 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SpeciesController {
 
-  private final SpeciesService speciesService;
-  private final SpeciesCreateVmMappers speciesCreateVmMappers;
-
+    private final SpeciesService speciesService;
+    private final SpeciesCreateVmMappers speciesCreateVmMappers;
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody @Valid SpeciesVM speciesVM){
+    public ResponseEntity<String> create(@RequestBody @Valid SpeciesVM speciesVM) {
         Species species = speciesCreateVmMappers.toEntity(speciesVM);
         speciesService.save(species);
-        return ResponseEntity.ok("Species created successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Species created successfully");
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<SpeciesVM> getById(@PathVariable @Valid UUID id) {
-        Optional<Species> species = speciesService.findById(id);
-        return species.map(value -> ResponseEntity.ok(speciesCreateVmMappers.toVm(value)))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<SpeciesVM> getById(@PathVariable UUID id) {
+        Species species = speciesService.findById(id);
+        return ResponseEntity.ok(speciesCreateVmMappers.toVm(species));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateSpecies(@PathVariable UUID id, @RequestBody @Valid SpeciesVM speciesVM) {
-        Optional<Species> speciesOptional = speciesService.findById(id);
-        if (speciesOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Species not found");
-        }
-        Species species = speciesOptional.get();
-        species.setName(speciesVM.getName());
-        species.setCategory(SpeciesType.valueOf(speciesVM.getCategory()));
-        species.setMinimumWeight(speciesVM.getMinimumWeight());
-        species.setDifficulty(Difficulty.valueOf(speciesVM.getDifficulty()));
-        species.setPoints(speciesVM.getPoints());
-
-        speciesService.save(species);
+        Species updatedSpecies = speciesCreateVmMappers.toEntity(speciesVM);
+        speciesService.updateSpecies(id, updatedSpecies);
         return ResponseEntity.ok("Species updated successfully");
     }
 
-
-
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteSpecies(@PathVariable UUID id) {
+        speciesService.delete(id);
+        return ResponseEntity.ok("Species deleted successfully");
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
-
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
 }

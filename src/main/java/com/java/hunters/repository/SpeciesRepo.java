@@ -9,5 +9,6 @@ import java.util.UUID;
 @Repository
 public interface SpeciesRepo extends JpaRepository<Species, UUID> {
 
+    boolean existsByName(String name);
 
 }
