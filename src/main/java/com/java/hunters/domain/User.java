@@ -1,51 +1,53 @@
-package com.java.hunters.domain;
+    package com.java.hunters.domain;
 
 
-import com.java.hunters.domain.enums.Role;
-import jakarta.persistence.*;
-import lombok.*;
+    import com.java.hunters.domain.enums.Role;
+    import jakarta.persistence.*;
+    import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+    import java.time.LocalDateTime;
+    import java.util.List;
+    import java.util.UUID;
 
-@Entity
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @Entity
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+
+    @Table(name = "\"user\"")
+    public class User {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.UUID)
+        private UUID id;
 
 
+        private String username;
 
-    private String username;
+        private String password;
 
-    private String password;
+        @Enumerated(EnumType.STRING)
+        private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+        private String firstName;
 
-    private String firstName;
+        private String lastName;
 
-    private String lastName;
+        private String cin;
 
-    private String cin;
+        private String email;
 
-    private String email;
+        private String nationality;
 
-    private String nationality;
+        private LocalDateTime joinDate;
 
-    private LocalDateTime joinDate;
+        private LocalDateTime licenseExpirationDate;
 
-    private LocalDateTime licenseExpirationDate;
+        @OneToMany(mappedBy = "user")
+        private List<Participation> participations;
 
-    @OneToMany(mappedBy = "user")
-    private List<Participation> participations;
-
-}
+    }
 

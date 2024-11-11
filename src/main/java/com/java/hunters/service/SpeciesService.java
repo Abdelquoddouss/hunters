@@ -3,9 +3,13 @@ package com.java.hunters.service;
 import com.java.hunters.domain.Species;
 import com.java.hunters.exception.DuplicateResourceException;
 import com.java.hunters.exception.ResourceNotFoundException;
+import com.java.hunters.repository.HuntRepo;
 import com.java.hunters.repository.SpeciesRepo;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,8 @@ import java.util.UUID;
 public class SpeciesService {
 
     private final SpeciesRepo speciesRepo;
+
+    private final HuntRepo huntRepo;
 
     @Transactional
     public Species save(Species species) {
@@ -55,6 +61,7 @@ public class SpeciesService {
         Species speciesToDelete = findById(id); // use findById to handle exception
 
         try {
+            huntRepo.deleteBySpeciesId(speciesToDelete.getId());
             speciesRepo.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalStateException("Cannot delete species as it is referenced in other records.");
