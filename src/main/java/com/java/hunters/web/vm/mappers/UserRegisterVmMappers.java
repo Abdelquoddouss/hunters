@@ -13,10 +13,13 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserRegisterVmMappers {
     @Mapping(target = "joinDate", expression = "java(java.time.LocalDateTime.now())")
-
     User toEntity(UserVM userVM);
 
-    List<UserResponse> toUserResponse(Page<User> users);
+    UserResponse toUserResponse(User user);
+
+    default Page<UserResponse> toUserResponsePage(Page<User> users) {
+        return users.map(this::toUserResponse);
+    }
 
     User toUser(LoginVM loginVM);
 

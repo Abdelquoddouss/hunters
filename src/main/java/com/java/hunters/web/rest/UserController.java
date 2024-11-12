@@ -35,12 +35,12 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size)
-    {
+    public ResponseEntity<Page<UserResponse>> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("nationality").ascending());
         Page<User> users = userService.getAll(pageable);
 
-        List<UserResponse> usersDTO = userRegisterVmMappers.toUserResponse(users);
+        Page<UserResponse> usersDTO = userRegisterVmMappers.toUserResponsePage(users);
 
         return ResponseEntity.ok(usersDTO);
     }
@@ -52,4 +52,16 @@ public class UserController {
         return ResponseEntity.ok("User logged in successfully");
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> searchUsersByNameOrEmail(@RequestParam(defaultValue = "") String firstName,
+                                                           @RequestParam(defaultValue = "") String lastName,
+                                                           @RequestParam(defaultValue = "") String email) {
+
+        List<User> users = userService.searchUsers(firstName, lastName, email);
+        List<UserResponse> userResponses = users.stream()
+                .map(userRegisterVmMappers::toUserResponse)
+                .toList();
+        return ResponseEntity.ok( userResponses);
+    }
 }

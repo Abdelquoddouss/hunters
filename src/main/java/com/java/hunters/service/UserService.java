@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -46,6 +47,10 @@ public class UserService {
         }
 
         return userEntity;
+    }
+
+    public List<User> searchUsers(String firstName, String lastName, String email) {
+        return userRepo.findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCaseAndEmailContainingIgnoreCase(firstName, lastName, email);
     }
 
 }
