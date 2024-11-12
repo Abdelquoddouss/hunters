@@ -24,3 +24,5 @@ public class SpeciesVM {
     @NotNull(message = "Points are required")
     private Integer points;
 }
+
+

@@ -1,6 +1,7 @@
 package com.java.hunters.service;
 
 import com.java.hunters.domain.Species;
+import com.java.hunters.domain.enums.SpeciesType;
 import com.java.hunters.exception.DuplicateResourceException;
 import com.java.hunters.exception.ResourceNotFoundException;
 import com.java.hunters.repository.HuntRepo;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -85,4 +87,14 @@ public class SpeciesService {
             throw new IllegalArgumentException("Points must be a non-negative value.");
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<Species> findSpeciesByType(SpeciesType type) {
+        if (type != null) {
+            return speciesRepo.findByCategory(type);
+        } else {
+            return speciesRepo.findAll();
+        }
+    }
+
 }

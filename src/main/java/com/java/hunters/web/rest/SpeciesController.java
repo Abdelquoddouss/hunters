@@ -14,8 +14,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/species")
@@ -49,6 +51,15 @@ public class SpeciesController {
     public ResponseEntity<String> deleteSpecies(@PathVariable UUID id) {
         speciesService.delete(id);
         return ResponseEntity.ok("Species deleted successfully");
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<SpeciesVM>> getAllSpecies(@RequestParam(required = false) SpeciesType type) {
+        List<Species> speciesList = speciesService.findSpeciesByType(type);
+        List<SpeciesVM> speciesVMList = speciesList.stream()
+                .map(speciesCreateVmMappers::toVm)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(speciesVMList);
     }
 
 
